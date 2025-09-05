@@ -1,2 +1,2 @@
 var minhavar := inteiro,
-main -> inteiro := [var minhavar := inteiro com 12];
+main -> inteiro := [var minhavar := inteiro com 12var minhavar := inteiro com 12];

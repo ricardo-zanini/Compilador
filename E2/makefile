@@ -25,13 +25,16 @@ $(BISON_OUTPUT) $(BISON_HEADER): $(BISON_FILE)
 $(FLEX_OUTPUT): $(FLEX_FILE)
 	$(FLEX) $(FLEX_FILE)
 
-# ============ COMPILAÇÃO ===========
+# ============ COMPILAÇÃO ============
 
-$(BISON_OBJECT): $(FLEX_OUTPUT) $(BISON_OUTPUT)
-	$(CC) -c $(FLEX_OUTPUT) $(BISON_OUTPUT)
+$(BISON_OBJECT): $(BISON_OUTPUT)
+	$(CC) -c $(BISON_OUTPUT)
 
-$(EXEC): $(BISON_OBJECT) $(FLEX_OBJECT)
-	$(CC) -o $(EXEC) $(BISON_OBJECT) $(FLEX_OBJECT) -lfl
+$(FLEX_OBJECT): $(FLEX_OUTPUT)
+	$(CC) -c $(FLEX_OUTPUT)
+
+$(EXEC): $(BISON_OBJECT) $(FLEX_OBJECT) $(MAIN)
+	$(CC) -o $(EXEC) $(BISON_OBJECT) $(FLEX_OBJECT) $(MAIN) -lfl
 
 # ============== CLEAN ==============
 
