@@ -32,6 +32,7 @@ com                             { return TK_COM; }          /* Ao encontrar a pa
 .                               { return TK_ER; }           /* Qualquer outro caractere que não seja contemplado nas regras acima é um erro, assim retornando TK_ERRO */
 %%
 
+/* Retorna o número da linha atual, usado em caso de erro sintático */
 int get_line_number(){
     return yylineno;
 }
