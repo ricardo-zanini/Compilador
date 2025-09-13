@@ -1,0 +1,100 @@
+// Arquivo único com exemplos de construções sintaticamente válidas,
+// baseado na especificação da linguagem E2.
+
+// 1. Declarações de variáveis globais (sem inicialização)
+var var_global_inteira := inteiro,
+var var_global_decimal := decimal,
+
+// 2. Definições de Funções
+
+// Função sem parâmetros e com corpo vazio
+func_sem_params -> inteiro := [],
+
+// Função com um único parâmetro
+func_area_circulo -> decimal com raio := decimal := [
+    // O corpo poderia ter a lógica aqui
+],
+
+// Função com múltiplos parâmetros
+func_soma -> inteiro com a := inteiro, b := inteiro := [
+    retorna a + b := inteiro
+],
+
+// Função principal que demonstra todos os comandos simples válidos
+programa_principal -> inteiro := [
+
+    // Declaração de variável local (sem inicialização)
+    var var_local_sem_init := decimal
+
+    // Declaração de variável local (com inicialização)
+    var contador := inteiro com 10
+    var pi := decimal com 3.14
+
+    // Comando de Atribuição com uma expressão simples
+    contador := 100
+
+    // Expressões com operadores unários
+    contador := -5
+
+    // Expressões com operadores binários, precedência e parênteses
+    contador := (5 + 3) * 2
+    var_local_sem_init := 10.0 / 2.0
+
+    // Chamada de função (os argumentos são expressões)
+    func_sem_params()
+    var_local_sem_init := func_area_circulo(10.0)
+
+    // Estruturas de Controle de Fluxo
+    se (contador > 50) [
+        // Bloco do 'se'
+        pi := 3.14159
+    ]
+
+    se (contador <= 100) [
+        // Bloco do 'se'
+    ] senao [
+        // Bloco do 'senao'
+    ]
+
+    enquanto (contador > 0) [
+        contador := contador - 1
+    ]
+
+    // Comando de Retorno
+    retorna 0 := inteiro
+],
+
+// Teste 1
+
+
+// Teste 2
+var x := inteiro,
+
+// Teste 4
+f -> inteiro := [],
+
+// Teste 6
+var x := decimal,
+f -> inteiro := [var y := inteiro com 3.14],
+
+// Teste 7
+f -> decimal p := inteiro := [retorna 1.0 := decimal],
+
+// Teste 9
+var x := inteiro,
+f -> inteiro := [x := 5 + 3 * 2],
+
+// Teste 11
+f -> inteiro := [se (x < 10) [x := x + 1]],
+
+// Teste 13
+f -> inteiro := [enquanto (x > 0) [x := x - 1]],
+
+// Teste 15
+g -> inteiro := [retorna ! (a & b) := inteiro],
+
+// Teste 17
+h -> inteiro a := decimal , b := inteiro := [var c := decimal c := a / 2.0 h()],
+
+// Teste 19
+var y := inteiro, f -> decimal := [[var z := inteiro com 42 z := -z]];

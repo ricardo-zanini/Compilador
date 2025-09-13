@@ -1,0 +1,19 @@
+ex_func1
+ -> 
+ inteiro
+ ex_parametro_sem_com_e_virgula 
+ := 
+ inteiro := [
+    se (j > k) [
+        var decl_variavel_com_inic := inteiro com 10
+        var decl_variavel := decimal
+    ]
+    enquanto ((2+2)*!ex_id | (ex_id2 & ex_chamada_func()) % 3.4) [
+        chamada_funcao()
+        chamada_funcao(teste_args, (12.43))
+        retorna c := inteiro
+        teste_atrib := a + b
+    ]
+], 
+ex_func2 -> decimal com param := inteiro, param2 := decimal := []
+;
