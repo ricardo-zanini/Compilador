@@ -1,8 +1,13 @@
+# ============ GRUPO R ==================
+# Bernardo Cobalchini Zietolie - 00550164
+# Ricardo Zanini de Costa - 00344523
+
 # ============ VARIÁVEIS ===========
 
 BISON = bison
 FLEX = flex
 CC = gcc
+CFLAGS = -Wall -Werror -fsanitize=address
 BISON_FILE = parser.y
 FLEX_FILE = scanner.l
 BISON_OUTPUT = parser.tab.c
@@ -28,13 +33,13 @@ $(FLEX_OUTPUT): $(FLEX_FILE)
 # ============ COMPILAÇÃO ============
 
 $(BISON_OBJECT): $(BISON_OUTPUT)
-	$(CC) -c $(BISON_OUTPUT)
+	$(CC) $(CFLAGS) -c $(BISON_OUTPUT)
 
 $(FLEX_OBJECT): $(FLEX_OUTPUT)
-	$(CC) -c $(FLEX_OUTPUT)
+	$(CC) $(CFLAGS) -c $(FLEX_OUTPUT)
 
 $(EXEC): $(BISON_OBJECT) $(FLEX_OBJECT) $(MAIN)
-	$(CC) -o $(EXEC) $(BISON_OBJECT) $(FLEX_OBJECT) $(MAIN) -lfl
+	$(CC) $(CFLAGS) -o $(EXEC) $(BISON_OBJECT) $(FLEX_OBJECT) $(MAIN) -lfl
 
 # ============== CLEAN ==============
 

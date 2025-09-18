@@ -1,4 +1,10 @@
 /*
+* ============ GRUPO R ==================
+* Bernardo Cobalchini Zietolie - 00550164
+* Ricardo Zanini de Costa - 00344523
+ */
+
+/*
 Função principal para realização da análise sintática.
 */
 #include <stdio.h>

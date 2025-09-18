@@ -1,3 +1,9 @@
+/*
+* ============ GRUPO R ==================
+* Bernardo Cobalchini Zietolie - 00550164
+* Ricardo Zanini de Costa - 00344523
+ */
+
 %{
     #include <stdio.h>
     int yylex(void);
@@ -55,15 +61,13 @@ elemento
 
 /* FUNÇÃO: Definição de função, que possui um cabeçalho com zero ou mais parâmetros, seguido por um corpo */
 funcao
-    : TK_ID TK_SETA tipo lista_parametros_ini_com TK_ATRIB bloco_comandos;
+    : TK_ID TK_SETA tipo lista_parametros_ini TK_ATRIB bloco_comandos;
 
 /* CABEÇALHO DA FUNÇÃO: Pode ter zero ou mais parâmetros (O TOKEN TK_COM É OPCIONAL!!) */
-lista_parametros_ini_com
-    : TK_COM lista_parametros_ini
-    | lista_parametros_ini;
 
 lista_parametros_ini
-    : lista_parametros
+    : TK_COM lista_parametros
+    | lista_parametros
     | %empty;
 
 lista_parametros

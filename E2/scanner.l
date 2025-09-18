@@ -1,9 +1,16 @@
+/*
+* ============ GRUPO R ==================
+* Bernardo Cobalchini Zietolie - 00550164
+* Ricardo Zanini de Costa - 00344523
+ */
+
 %{
     #include "parser.tab.h"
 %}
 
 %option noyywrap
 %option yylineno
+%option noinput nounput
 
 %%
 
