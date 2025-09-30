@@ -15,7 +15,7 @@ BISON_HEADER = parser.tab.h
 BISON_OBJECT = parser.tab.o
 FLEX_OUTPUT = lex.yy.c
 FLEX_OBJECT = lex.yy.o
-ASD_OUTPUT = asd.c
+ASD_SOURCE = asd.c
 ASD_HEADER = asd.h
 ASD_OBJECT = asd.o
 MAIN = main.c
@@ -30,7 +30,7 @@ $(BISON_OUTPUT) $(BISON_HEADER): $(BISON_FILE)
 
 # =============== FLEX ==============
 
-$(FLEX_OUTPUT): $(FLEX_FILE)
+$(FLEX_OUTPUT): $(FLEX_FILE) $(BISON_HEADER)
 	$(FLEX) $(FLEX_FILE)
 
 # ============ COMPILAÇÃO ============
@@ -38,8 +38,11 @@ $(FLEX_OUTPUT): $(FLEX_FILE)
 $(BISON_OBJECT): $(BISON_OUTPUT)
 	$(CC) $(CFLAGS) -c $(BISON_OUTPUT)
 
-$(FLEX_OBJECT): $(FLEX_OUTPUT)
+$(FLEX_OBJECT): $(FLEX_OUTPUT) $(BISON_HEADER)
 	$(CC) $(CFLAGS) -c $(FLEX_OUTPUT)
+
+$(ASD_OBJECT): $(ASD_SOURCE) $(ASD_HEADER)
+	$(CC) $(CFLAGS) -c $(ASD_SOURCE)
 
 $(EXEC): $(BISON_OBJECT) $(FLEX_OBJECT) $(ASD_OBJECT) $(MAIN)
 	$(CC) $(CFLAGS) -o $(EXEC) $(BISON_OBJECT) $(FLEX_OBJECT) $(ASD_OBJECT) $(MAIN) -lfl

@@ -6,12 +6,29 @@
 
 %{
     #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+
+    #include "common.h" /* Cabeçalho separado para as definições que precisam ser compartilhadas entre o scanner e o parser */
+
     int yylex(void);
     void yyerror (char const *mensagem);
     int get_line_number();
 %}
 
+/* Diretiva que configura a variável global yylval. */
+%union {
+    struct valor_lexico_struct* valor_lexico;
+}
+
 %define parse.error verbose
+
+/* Somente tokens identificadores e literais devem possuir um valor léxico a ser empregado na AST. */
+%token <valor_lexico> TK_ID
+%token <valor_lexico> TK_LI_INTEIRO
+%token <valor_lexico> TK_LI_DECIMAL
+
+/* Tokens que não carregam valor */
 %token TK_TIPO
 %token TK_VAR
 %token TK_SENAO
@@ -27,9 +44,6 @@
 %token TK_OC_GE
 %token TK_OC_EQ
 %token TK_OC_NE
-%token TK_ID
-%token TK_LI_INTEIRO
-%token TK_LI_DECIMAL
 %token TK_ER
 
 %%
@@ -121,7 +135,7 @@ lista_argumentos
 
 /* COMANDO DE RETORNO: Retorna uma expressão e seu tipo*/
 comando_retorno
-    : TK_RETORNA expressao TK_ATRIB tipo
+    : TK_RETORNA expressao TK_ATRIB tipo;
 
 /* COMANDO DE CONTROLE DE FLUXO: O controle de fluxo pode ser uma condição ou uma repetição, uma condição pode ou não ter o comando else */
 comando_controle_fluxo

@@ -5,7 +5,9 @@
  */
 
 %{
+    #include "common.h" /* Cabeçalho separado para as definições que precisam ser compartilhadas entre o scanner e o parser */
     #include "parser.tab.h"
+    #include <string.h> 
 %}
 
 %option noyywrap
@@ -30,9 +32,43 @@ com                             { return TK_COM; }          /* Ao encontrar a pa
 "!="                            { return TK_OC_NE; }        /* Ao encontrar o operador relacional "!=" (diferente) retorna TK_OC_NE */
 ":="                            { return TK_ATRIB; }        /* Ao encontrar o operador de atribuição ":=" retorna TK_ATRIB */
 "->"                            { return TK_SETA; }         /* Ao encontrar o operador "->" retorna TK_SETA */
-[a-z_][a-z0-9_]*                { return TK_ID; }           /* Identificadores que podem conter somente letras minúsculas, números e underlines, mas que não podem começar com números */
-[0-9]+                          { return TK_LI_INTEIRO; }   /* Identifica números inteiros positivos */
-[0-9]*\.[0-9]+                  { return TK_LI_DECIMAL; }   /* Identifica números com casas decimais, e com dígitos opcionais antes do "." */
+
+[a-z_][a-z0-9_]*                {   /* Identificadores que podem conter somente letras minúsculas, números e underlines, mas que não podem começar com números */
+
+                                    /* Aloca memória para a struct do valor léxico */
+                                    yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
+
+                                    yylval.valor_lexico->num_linha = yylineno;              /* Número da linha atual */
+                                    yylval.valor_lexico->tipo_token = TK_ID;                /* Tipo do token */
+                                    yylval.valor_lexico->valor_token = strdup(yytext);      /* Valor (o próprio lexema) */
+
+                                    return TK_ID;
+                                }
+
+[0-9]+                          {   /* Identifica números inteiros positivos */
+
+                                    /* Aloca memória para a struct do valor léxico */
+                                    yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
+
+                                    yylval.valor_lexico->num_linha = yylineno;              /* Número da linha atual */
+                                    yylval.valor_lexico->tipo_token = TK_LI_INTEIRO;        /* Tipo do token */
+                                    yylval.valor_lexico->valor_token = strdup(yytext);      /* Valor (o próprio lexema) */
+
+                                    return TK_LI_INTEIRO;
+                                }
+
+[0-9]*\.[0-9]+                  {   /* Identifica números com casas decimais, e com dígitos opcionais antes do "." */
+
+                                    /* Aloca memória para a struct do valor léxico */
+                                    yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
+
+                                    yylval.valor_lexico->num_linha = yylineno;              /* Número da linha atual */
+                                    yylval.valor_lexico->tipo_token = TK_LI_DECIMAL;        /* Tipo do token */
+                                    yylval.valor_lexico->valor_token = strdup(yytext);      /* Valor (o próprio lexema) */
+
+                                    return TK_LI_DECIMAL;
+                                }
+
 "//".*[\n]*                                                 /* Ignora-se comentários de uma linha que começam com "//" e vão até o final da linha */
 \n                                                          /* Ignora-se quebras de linha */
 [ \t\r]+                                                    /* Ignora-se outros caracteres nulos */
