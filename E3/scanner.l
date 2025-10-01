@@ -5,7 +5,6 @@
  */
 
 %{
-    #include "common.h" /* Cabeçalho separado para as definições que precisam ser compartilhadas entre o scanner e o parser */
     #include "parser.tab.h"
     #include <string.h> 
 %}
