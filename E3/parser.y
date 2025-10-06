@@ -83,13 +83,13 @@
 /* INICIALIZAÇÃO: Inicialização da gramática, pode ser lista, ou pode ser vazia */
 /* Ao final, a variável global 'arvore' aponta para a raiz da AST construída */
 programa
-    : lista ';' { arvore = $1 ? $1 : NULL; }
+    : lista ';' { arvore = $1; }
     | %empty   { arvore = NULL; }
 ;
 
 /* LISTA: Definição de "lista", que pode ser um único elemento ou uma lista de elementos separados por vírgula */
 lista
-    : elemento              { $$ = $1 ? $1 : NULL; }
+    : elemento              { $$ = $1; }
     | elemento ',' lista
     {   
         if ($1) { // Se o elemento atual não for nulo
@@ -152,8 +152,8 @@ parametro
 
 /* COMANDO SIMPLES: Um comando simples pode ser uma série de comandos diferentes, como listados */
 comando_simples
-    : bloco_comandos            { $$ = $1 ? $1 : NULL; }
-    | declaracao_variavel       { $$ = $1 ? $1 : NULL; } /* Declarações de variável sem inicialização devem ser ignoradas na AST */
+    : bloco_comandos            { $$ = $1; }
+    | declaracao_variavel       { $$ = $1; }
     | comando_atribuicao        { $$ = $1; }
     | chamada_funcao            { $$ = $1; }
     | comando_retorno           { $$ = $1; }
@@ -162,16 +162,16 @@ comando_simples
 
 /* BLOCO DE COMANDOS: Um bloco de comandos fica em colchetes, e pode ter 0 ou mais comandos simples*/
 bloco_comandos
-    : '[' bloco_comandos_conteudo ']'   { $$ = $2 ? $2 : NULL; }
+    : '[' bloco_comandos_conteudo ']'   { $$ = $2; }
 ;
 
 bloco_comandos_conteudo
     : %empty                            { $$ = NULL; }
-    | bloco_comandos_conteudo_lista     { $$ = $1 ? $1 : NULL; }
+    | bloco_comandos_conteudo_lista     { $$ = $1; }
 ;
 
 bloco_comandos_conteudo_lista
-    : comando_simples                                   { $$ = $1 ? $1 : NULL; }
+    : comando_simples                                   { $$ = $1; }
     | comando_simples bloco_comandos_conteudo_lista
     {
         if ($1) { // Se o comando atual não for nulo
@@ -244,7 +244,7 @@ condicional
     {
         $$ = asd_new("se"); // label é o lexema de TK_SE
         asd_add_child($$, $3);
-        asd_add_child($$, $5);
+        if ($5) asd_add_child($$, $5);
         if ($6) asd_add_child($$, $6);
     }
 ;
@@ -259,7 +259,7 @@ repeticao
     {
         $$ = asd_new("enquanto"); // label é o lexema de TK_ENQUANTO
         asd_add_child($$, $3);
-        asd_add_child($$, $5);
+        if ($5) asd_add_child($$, $5);
     }
 ;
 

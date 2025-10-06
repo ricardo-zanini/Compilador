@@ -20,6 +20,7 @@ ASD_HEADER = asd.h
 ASD_OBJECT = asd.o
 MAIN = main.c
 EXEC = etapa3
+SELF = makefile
 
 all: $(EXEC)
 
@@ -53,6 +54,6 @@ clean:
 	rm -f $(EXEC) $(BISON_OUTPUT) $(BISON_HEADER) $(FLEX_OUTPUT) $(BISON_OBJECT) $(FLEX_OBJECT) $(ASD_OBJECT)
 
 tgz: clean
-	tar -czvf $(EXEC).tgz *
+	tar -czvf $(EXEC).tgz $(ASD_SOURCE) $(ASD_HEADER) $(MAIN) $(SELF) $(BISON_FILE) $(FLEX_FILE)
 
 # --> "It makes your life easier" <--
