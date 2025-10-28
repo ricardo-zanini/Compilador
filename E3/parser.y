@@ -11,12 +11,22 @@
 
     #include "asd.h"    /* Cabeçalho para a construção da Árvore de Sintaxe Abstrata (AST) */
 
+    #include "parser.tab.h" /* Para garantir que ValorLexico seja conhecido pelos protótipos mais abaixo */
+
     /* Declarações de funções que serão utilizadas nas ações semânticas. */
     int yylex(void);
     void yyerror (char const *mensagem);
     int get_line_number();
 
     extern asd_tree_t *arvore; /* Variável externa (de "main.c") que serve como ponteiro para a raiz da AST a ser construída */
+
+    /* ============================================================================================ */
+    /* ======================== PROTÓTIPOS DAS FUNÇÕES AUXILIARES PARA A AST ====================== */
+    /* ============================================================================================ */
+    static asd_tree_t* criar_no_folha(ValorLexico* token);
+    static asd_tree_t* criar_no_unario(const char* op_label, asd_tree_t* filho);
+    static asd_tree_t* criar_no_binario(const char* op_label, asd_tree_t* filho1, asd_tree_t* filho2);
+    static void free_token(ValorLexico* token);
 %}
 
 /* Seção que define código que é necessário tanto no parser quanto no scanner */
@@ -114,14 +124,7 @@ elemento
 /* FUNÇÃO: Definição de função, que possui um cabeçalho com zero ou mais parâmetros, seguido por um corpo */
 /* A ação semântica cria um nó na AST com o nome da função. O bloco de comandos é adicionado como filho caso não seja vazio. */
 funcao
-    : TK_ID TK_SETA tipo lista_parametros_ini TK_ATRIB bloco_comandos
-    { 
-        $$ = asd_new($1->valor_token);
-        free($1->valor_token);
-        free($1);
-
-        if ($6) asd_add_child($$, $6);
-    }
+    : TK_ID TK_SETA tipo lista_parametros_ini TK_ATRIB bloco_comandos { $$ = criar_no_folha($1); if ($6) asd_add_child($$, $6); }
 ;
 
 /* CABEÇALHO DA FUNÇÃO: Pode ter zero ou mais parâmetros (O TOKEN TK_COM É OPCIONAL!!) */
@@ -138,12 +141,7 @@ lista_parametros
 ;
 
 parametro
-    : TK_ID TK_ATRIB tipo
-    {
-        $$ = NULL;
-        free($1->valor_token);
-        free($1);
-    }
+    : TK_ID TK_ATRIB tipo { $$ = NULL; free_token($1); }
 ;
 
 /* ==================================================================== */
@@ -185,16 +183,7 @@ bloco_comandos_conteudo_lista
 
 /* COMANDO DE ATRIBUIÇÃO: Identificador, seguido de atribuição e expressão*/
 comando_atribuicao
-    : TK_ID TK_ATRIB expressao
-    {
-        $$ = asd_new(":="); // label é o lexema de TK_ATRIB
-
-        asd_add_child($$, asd_new($1->valor_token));
-        free($1->valor_token);
-        free($1);
-
-        asd_add_child($$, $3);
-    }
+    : TK_ID TK_ATRIB expressao { $$ = criar_no_binario(":=", criar_no_folha($1), $3); /* label é o lexema de TK_ATRIB */ }
 ;
 
 /* CHAMADA DE FUNÇÃO: Chamada de função pode ter 0 ou mais argumentos listados entre parênteses*/
@@ -204,8 +193,7 @@ chamada_funcao
         char* label = malloc(strlen("call ") + strlen($1->valor_token) + 1); // label é 'call' seguido do nome da função
 
         sprintf(label, "call %s", $1->valor_token);
-        free($1->valor_token);
-        free($1);
+        free_token($1);
 
         $$ = asd_new(label);
         free(label);
@@ -226,11 +214,7 @@ lista_argumentos
 
 /* COMANDO DE RETORNO: Retorna uma expressão e seu tipo*/
 comando_retorno
-    : TK_RETORNA expressao TK_ATRIB tipo
-    {
-        $$ = asd_new("retorna"); // label é o lexema de TK_RETORNA
-        asd_add_child($$, $2);
-    }
+    : TK_RETORNA expressao TK_ATRIB tipo { $$ = criar_no_unario("retorna", $2); /* label é o lexema de TK_RETORNA */ }
 ;
 
 /* COMANDO DE CONTROLE DE FLUXO: O controle de fluxo pode ser uma condição ou uma repetição, uma condição pode ou não ter o comando else */
@@ -242,8 +226,7 @@ comando_controle_fluxo
 condicional
     : TK_SE '(' expressao ')' bloco_comandos condicional_else
     {
-        $$ = asd_new("se"); // label é o lexema de TK_SE
-        asd_add_child($$, $3);
+        $$ = criar_no_unario("se", $3); // label é o lexema de TK_SE
         if ($5) asd_add_child($$, $5);
         if ($6) asd_add_child($$, $6);
     }
@@ -255,12 +238,7 @@ condicional_else
 ;
 
 repeticao
-    : TK_ENQUANTO '(' expressao ')' bloco_comandos
-    {
-        $$ = asd_new("enquanto"); // label é o lexema de TK_ENQUANTO
-        asd_add_child($$, $3);
-        if ($5) asd_add_child($$, $5);
-    }
+    : TK_ENQUANTO '(' expressao ')' bloco_comandos { $$ = criar_no_unario("enquanto", $3); /* label é o lexema de TK_ENQUANTO */ if ($5) asd_add_child($$, $5); }
 ;
 
 /* ==================================================================== */
@@ -270,27 +248,13 @@ repeticao
 /* VARIÁVEL INI: Uma variavel que faz parte da linguagem, não pode ter atribuição */
 /* Retorna NULL, pois não gera nó na AST, e libera a memória do token do identificador */
 declaracao_variavel_no_ini
-    : TK_VAR TK_ID TK_ATRIB tipo
-    {
-        $$ = NULL;
-        free($2->valor_token);
-        free($2);
-    }
+    : TK_VAR TK_ID TK_ATRIB tipo { $$ = NULL; free_token($2); }
 ;
 
 /* VARIÁVEL: Uma variavel que pode ou não ter uma atribuição*/
 declaracao_variavel
-    : TK_VAR TK_ID TK_ATRIB tipo TK_COM tipo_valor /* Declaração de variável com inicialização */
-    {
-        $$ = asd_new("com"); // label é o lexema de TK_COM
-
-        asd_add_child($$, asd_new($2->valor_token));
-        free($2->valor_token);
-        free($2);
-                     
-        asd_add_child($$, $6);                      
-    }
-    | declaracao_variavel_no_ini { $$ = NULL; } /* Declaração de variável sem inicialização */
+    : TK_VAR TK_ID TK_ATRIB tipo TK_COM tipo_valor  { $$ = criar_no_binario("com", criar_no_folha($2), $6); /* label é o lexema de TK_COM */ } /* Declaração de variável com inicialização */
+    | declaracao_variavel_no_ini                    { $$ = NULL; } /* Declaração de variável sem inicialização */
 ;
 
 /* TIPO: "Tipo" pode ser ou um inteiro ou um decimal, como especificado na descrição da linguagem */
@@ -302,18 +266,8 @@ tipo
 
 /* Criam nós folha na AST com o valor do literal e liberam a memória do token */
 tipo_valor
-    : TK_LI_DECIMAL
-    {
-        $$ = asd_new($1->valor_token);
-        free($1->valor_token);
-        free($1);
-    }
-    | TK_LI_INTEIRO
-    {
-        $$ = asd_new($1->valor_token);
-        free($1->valor_token);
-        free($1);
-    }
+    : TK_LI_DECIMAL { $$ = criar_no_folha($1); }
+    | TK_LI_INTEIRO { $$ = criar_no_folha($1); }
 ;
 
 /* ==================================================================== */
@@ -322,73 +276,96 @@ tipo_valor
 
 /* EXPRESSÃO: Expressões possuem vários níveis de acordo com sua precedência, quanto maior o nível menor o grau de precedência. Podem haver operadores unários e binários */
 expressao 
-    : expressao '|' nivel_6 { $$ = asd_new("|"); asd_add_child($$, $1); asd_add_child($$, $3); }
+    : expressao '|' nivel_6 { $$ = criar_no_binario("|", $1, $3); }
     | nivel_6               { $$ = $1; }
 ;
 
 nivel_6
-    : nivel_6 '&' nivel_5   { $$ = asd_new("&"); asd_add_child($$, $1); asd_add_child($$, $3); }
+    : nivel_6 '&' nivel_5   { $$ = criar_no_binario("&", $1, $3); }
     | nivel_5               { $$ = $1; }
 ;
 
 nivel_5
-    : nivel_5 TK_OC_EQ nivel_4 { $$ = asd_new("=="); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | nivel_5 TK_OC_NE nivel_4 { $$ = asd_new("!="); asd_add_child($$, $1); asd_add_child($$, $3); }
+    : nivel_5 TK_OC_EQ nivel_4 { $$ = criar_no_binario("==", $1, $3); }
+    | nivel_5 TK_OC_NE nivel_4 { $$ = criar_no_binario("!=", $1, $3); }
     | nivel_4                  { $$ = $1; }
 ;
 
 nivel_4
-    : nivel_4 '<' nivel_3      { $$ = asd_new("<"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | nivel_4 '>' nivel_3      { $$ = asd_new(">"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | nivel_4 TK_OC_LE nivel_3 { $$ = asd_new("<="); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | nivel_4 TK_OC_GE nivel_3 { $$ = asd_new(">="); asd_add_child($$, $1); asd_add_child($$, $3); }
+    : nivel_4 '<' nivel_3      { $$ = criar_no_binario("<", $1, $3); }
+    | nivel_4 '>' nivel_3      { $$ = criar_no_binario(">", $1, $3); }
+    | nivel_4 TK_OC_LE nivel_3 { $$ = criar_no_binario("<=", $1, $3); }
+    | nivel_4 TK_OC_GE nivel_3 { $$ = criar_no_binario(">=", $1, $3); }
     | nivel_3                  { $$ = $1; }
 ;
 
 nivel_3
-    : nivel_3 '+' nivel_2   { $$ = asd_new("+"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | nivel_3 '-' nivel_2   { $$ = asd_new("-"); asd_add_child($$, $1); asd_add_child($$, $3); }
+    : nivel_3 '+' nivel_2   { $$ = criar_no_binario("+", $1, $3); }
+    | nivel_3 '-' nivel_2   { $$ = criar_no_binario("-", $1, $3); }
     | nivel_2               { $$ = $1; }
 ;
 
 nivel_2
-    : nivel_2 '*' nivel_1   { $$ = asd_new("*"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | nivel_2 '/' nivel_1   { $$ = asd_new("/"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | nivel_2 '%' nivel_1   { $$ = asd_new("%"); asd_add_child($$, $1); asd_add_child($$, $3); }
+    : nivel_2 '*' nivel_1   { $$ = criar_no_binario("*", $1, $3); }
+    | nivel_2 '/' nivel_1   { $$ = criar_no_binario("/", $1, $3); }
+    | nivel_2 '%' nivel_1   { $$ = criar_no_binario("%", $1, $3); }
     | nivel_1               { $$ = $1; }
 ;
 
 nivel_1
-    : '+' nivel_1 { $$ = asd_new("+"); asd_add_child($$, $2); }
-    | '-' nivel_1 { $$ = asd_new("-"); asd_add_child($$, $2); }
-    | '!' nivel_1 { $$ = asd_new("!"); asd_add_child($$, $2); }
+    : '+' nivel_1 { $$ = criar_no_unario("+", $2); }
+    | '-' nivel_1 { $$ = criar_no_unario("-", $2); }
+    | '!' nivel_1 { $$ = criar_no_unario("!", $2); }
     | nivel_0     { $$ = $1; }
 ;
 
 nivel_0
-    : chamada_funcao  { $$ = $1; }
-    | TK_ID
-    {
-        $$ = asd_new($1->valor_token);
-        free($1->valor_token);
-        free($1);
-    }
-    | TK_LI_INTEIRO
-    {
-        $$ = asd_new($1->valor_token);
-        free($1->valor_token);
-        free($1);
-    }
-    | TK_LI_DECIMAL
-    {
-        $$ = asd_new($1->valor_token);
-        free($1->valor_token);
-        free($1);
-    }
+    : chamada_funcao    { $$ = $1; }
+    | TK_ID             { $$ = criar_no_folha($1); }
+    | TK_LI_INTEIRO     { $$ = criar_no_folha($1); }
+    | TK_LI_DECIMAL     { $$ = criar_no_folha($1); }
     | '(' expressao ')' { $$ = $2; }
 ;
 
 %%
+
+/* ==================================================================== */
+/* =================== FUNÇÕES AUXILIARES PARA A AST ================== */
+/* ==================================================================== */
+
+/* Cria um nó folha da AST a partir de um valor léxico */
+static asd_tree_t* criar_no_folha(ValorLexico* token)
+{
+    if (!token) return NULL;
+    asd_tree_t* no = asd_new(token->valor_token);
+    free_token(token);
+    return no;
+}
+
+/* Cria um nó de operador unário */
+static asd_tree_t* criar_no_unario(const char* op_label, asd_tree_t* filho)
+{
+    asd_tree_t* no = asd_new(op_label);
+    asd_add_child(no, filho);
+    return no;
+}
+
+/* Cria um nó de operador binário */
+static asd_tree_t* criar_no_binario(const char* op_label, asd_tree_t* filho1, asd_tree_t* filho2)
+{
+    asd_tree_t* no = asd_new(op_label);
+    asd_add_child(no, filho1);
+    asd_add_child(no, filho2);
+    return no;
+}
+
+/* Libera um token */
+static void free_token(ValorLexico* token)
+{
+    if (!token) return;
+    free(token->valor_token);
+    free(token);
+}
 
 /* Função chamada pelo Bison em caso de erro de sintaxe. Imprime uma mensagem de erro formatada, incluindo o número da linha. */
 void yyerror (char const *mensagem) {
