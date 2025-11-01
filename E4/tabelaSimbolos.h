@@ -32,6 +32,7 @@ typedef struct tabela_simbolos {
 typedef struct escopo_pilha {
     TabelaSimbolos *tabela_atual;
     struct escopo_pilha *escopo_pai; // Link para o escopo anterior (a base da pilha)
+    TipoDados tipo_retorno; // Qual o tipo de retorno compatível com o do escopo (função) atual
 } EscopoPilha;
 
 
@@ -42,6 +43,9 @@ void stack_pop(EscopoPilha **pilha);
 // Inserção e Busca
 void symbol_insert(EscopoPilha *pilha, char *chave, Simbolo *entrada);
 Simbolo* symbol_lookup(EscopoPilha *pilha, char *chave);
+
+/* Função auxiliar para duplicar o ValorLexico */
+ValorLexico* duplicar_valor_lexico(ValorLexico *lex);
 
 // Funções de criação de entradas (helpers)
 Simbolo* create_entry_var(char *chave, TipoDados tipo, ValorLexico *lex);

@@ -4,14 +4,14 @@
 #include "asd.h"
 #include "tipos.h"
 
-asd_tree_t *asd_new(const char *label)
+asd_tree_t *asd_new(const char *label, TipoDados data_type)
 {
   asd_tree_t *ret = NULL;
   ret = calloc(1, sizeof(asd_tree_t));
   if (ret != NULL){
     ret->label = strdup(label);
     ret->number_of_children = 0;
-    ret->data_type = TIPO_INDEF;
+    ret->data_type = data_type;
     ret->children = NULL;
   }
   return ret;
@@ -72,15 +72,15 @@ static void _asd_print_graphviz (FILE *foutput, asd_tree_t *tree)
   if (tree != NULL){
 
     // Modificado para incluir o tipo_dado no label do nó
-    const char* tipo_str = "";
-    switch(tree->data_type) {
-        case TIPO_INDEF: tipo_str = "Indef"; break;
-        case TIPO_INT: tipo_str = "Int"; break;
-        case TIPO_DEC: tipo_str = "Float"; break;
-    }
-    fprintf(foutput, "  %ld [ label=\"%s\\n(Tipo: %s)\" ];\n", (long)tree, tree->label, tipo_str);
+    // const char* tipo_str = "";
+    // switch(tree->data_type) {
+    //     case TIPO_INDEF: tipo_str = "Indef"; break;
+    //     case TIPO_INT: tipo_str = "Int"; break;
+    //     case TIPO_DEC: tipo_str = "Float"; break;
+    // }
+    // fprintf(foutput, "  %ld [ label=\"%s\\n(Tipo: %s)\" ];\n", (long)tree, tree->label, tipo_str);
 
-    //fprintf(foutput, "  %ld [ label=\"%s\" ];\n", (long)tree, tree->label);
+    fprintf(foutput, "  %ld [ label=\"%s\" ];\n", (long)tree, tree->label);
     for (i = 0; i < tree->number_of_children; i++){
       fprintf(foutput, "  %ld -> %ld;\n", (long)tree, (long)tree->children[i]);
       _asd_print_graphviz(foutput, tree->children[i]);

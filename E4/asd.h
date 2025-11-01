@@ -13,7 +13,7 @@ typedef struct asd_tree {
 /*
  * Função asd_new, cria um nó sem filhos com o label informado.
  */
-asd_tree_t *asd_new(const char *label);
+asd_tree_t *asd_new(const char *label, TipoDados data_type);
 
 /*
  * Função asd_tree, libera recursivamente o nó e seus filhos.

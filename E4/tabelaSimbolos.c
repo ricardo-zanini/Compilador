@@ -3,8 +3,9 @@
 #include "tabelaSimbolos.h"
 #include "erros.h"
 
-// Função auxiliar (extern) para erros
+// Funções auxiliares para erros
 extern void yyerror (char const *mensagem);
+extern void yyerror_semantico(char const *mensagem, int num_linha);
 
 /* Cria e empilha um novo escopo */
 void stack_push(EscopoPilha **pilha) {
@@ -12,6 +13,15 @@ void stack_push(EscopoPilha **pilha) {
     novo_escopo->tabela_atual = (TabelaSimbolos*) malloc(sizeof(TabelaSimbolos));
     novo_escopo->tabela_atual->hash_table = NULL; // uthash inicializa com NULL
     novo_escopo->escopo_pai = *pilha; // Aponta para o escopo anterior
+
+    if (*pilha != NULL) {
+        // Herda o tipo de retorno do escopo pai
+        novo_escopo->tipo_retorno = (*pilha)->tipo_retorno;
+    } else {
+        // Escopo global, não tem tipo de retorno
+        novo_escopo->tipo_retorno = TIPO_INDEF;
+    }
+
     *pilha = novo_escopo; // Atualiza o topo da pilha
 }
 
@@ -20,7 +30,7 @@ void stack_pop(EscopoPilha **pilha)
 {
     // Verifica se a pilha já está vazia
     if (*pilha == NULL) {
-        return; // Nada a fazer
+        return;
     }
 
     // Guarda um ponteiro para o escopo do topo (que será removido)
@@ -79,11 +89,7 @@ void symbol_insert(EscopoPilha *pilha, char *chave, Simbolo *entrada) {
 
     if (entrada_existente != NULL) {
         // Erro: Dupla declaração 
-        char msg_erro[256];
-        sprintf(msg_erro, "Identificador '%s' já declarado neste escopo (linha %d)", 
-                chave, entrada_existente->valor_lexico->num_linha);
-        yyerror(msg_erro);
-        exit(ERR_DECLARED);
+        report_error_declared(entrada->valor_lexico, entrada_existente);
     } else {
         HASH_ADD_KEYPTR(hh, pilha->tabela_atual->hash_table, 
                         entrada->chave, strlen(entrada->chave), entrada);
@@ -98,12 +104,33 @@ Simbolo* symbol_lookup(EscopoPilha *pilha, char *chave) {
     while (escopo_atual != NULL) {
         HASH_FIND_STR(escopo_atual->tabela_atual->hash_table, chave, entrada_encontrada);
         if (entrada_encontrada != NULL) {
-            return entrada_encontrada; // Encontrou!
+            return entrada_encontrada;
         }
         escopo_atual = escopo_atual->escopo_pai; // Desce na pilha 
     }
 
     return NULL; // Não encontrou em nenhum escopo
+}
+
+/* Função auxiliar para duplicar o ValorLexico */
+ValorLexico* duplicar_valor_lexico(ValorLexico *lex) {
+    if (lex == NULL) return NULL;
+
+    // Aloca memória para a nova estrutura
+    ValorLexico *copia = (ValorLexico*) malloc(sizeof(ValorLexico));
+    if (copia == NULL) {
+        yyerror("Erro fatal: Falha ao alocar memória para cópia do token.");
+        exit(1); // Erro crítico
+    }
+
+    // Copia os dados
+    copia->num_linha = lex->num_linha;
+    copia->tipo_token = lex->tipo_token;
+    
+    // Aloca memória e copia a string do valor do token
+    copia->valor_token = strdup(lex->valor_token);
+    
+    return copia;
 }
 
 /* Cria uma nova entrada na tabela de símbolos para uma VARIÁVEL. */
@@ -112,7 +139,7 @@ Simbolo* create_entry_var(char *chave, TipoDados tipo, ValorLexico *lex) {
     nova_entrada->chave = strdup(chave);
     nova_entrada->natureza = NAT_IDENTIFICADOR;
     nova_entrada->tipo_dado = tipo;
-    nova_entrada->valor_lexico = lex;
+    nova_entrada->valor_lexico = duplicar_valor_lexico(lex); // Armazena uma cópia profunda, não o ponteiro original
     nova_entrada->argumentos = NULL;
     nova_entrada->num_argumentos = 0;
     return nova_entrada;
@@ -125,10 +152,10 @@ Simbolo* create_entry_fun(char *chave, TipoDados tipo_retorno, ValorLexico *lex)
     Simbolo *nova_entrada = (Simbolo*) malloc(sizeof(Simbolo));
 
     // Preenche os campos com os dados da função
-    nova_entrada->chave = strdup(chave); // Copia a chave (nome da função)
+    nova_entrada->chave = strdup(chave);
     nova_entrada->natureza = NAT_FUNCAO;
-    nova_entrada->tipo_dado = tipo_retorno; // Tipo de retorno da função
-    nova_entrada->valor_lexico = lex;       // Transfere a posse do token
+    nova_entrada->tipo_dado = tipo_retorno;
+    nova_entrada->valor_lexico = duplicar_valor_lexico(lex); // Armazena uma cópia profunda, não o ponteiro original
     
     // Inicializa os campos específicos de função
     nova_entrada->argumentos = NULL;    // A lista de argumentos começa vazia
