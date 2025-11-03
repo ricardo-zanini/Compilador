@@ -54,6 +54,6 @@ asd_tree_t* semantica_declaracao_variavel(ValorLexico* ident, TipoDados tipo, as
 asd_tree_t* semantica_identificador_variavel(ValorLexico* ident);
 
 /* Função para tratar da semântica das expressões binárias, verificando tipos e criando nó na árvore */
-asd_tree_t* semantica_expressoes_binarias(char* operador, asd_tree_t* filho1, asd_tree_t* filho2, int num_linha);
+asd_tree_t* semantica_expressoes_binarias(char* operador, asd_tree_t* filho1, asd_tree_t* filho2);
 
 #endif // _SEMANTICA_H_

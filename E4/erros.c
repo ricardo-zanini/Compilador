@@ -43,14 +43,14 @@ void report_error_declared(ValorLexico *novo_token, Simbolo *simbolo_existente) 
 
 void report_error_variable_as_function(ValorLexico *token) {
     char msg_erro[256];
-    snprintf(msg_erro, 256, "Identificador '%s' dito variável usado como uma função", token->valor_token);
+    snprintf(msg_erro, 256, "Variável '%s' usada como uma função", token->valor_token);
     yyerror_base(msg_erro, token->num_linha);
     exit(ERR_VARIABLE);
 }
 
 void report_error_function_as_variable(ValorLexico *token) {
     char msg_erro[256];
-    snprintf(msg_erro, 256, "Identificador '%s' dito função usado como uma variável", token->valor_token);
+    snprintf(msg_erro, 256, "Função '%s' usada como uma variável", token->valor_token);
     yyerror_base(msg_erro, token->num_linha);
     exit(ERR_FUNCTION);
 }
@@ -107,7 +107,7 @@ void report_error_wrong_type_return_func(int num_linha, TipoDados decl_tipo, Tip
 
 void report_error_wrong_type_if_else(int num_linha, TipoDados if_tipo, TipoDados else_tipo) {
     char msg_erro[256];
-    snprintf(msg_erro, 256, "TIPOS NÃO COMPATÍVEIS: Bloco 'if' com tipo '%s' e bloco 'else' com tipo '%s'",
+    snprintf(msg_erro, 256, "TIPOS NÃO COMPATÍVEIS: Bloco 'se' com tipo '%s' e bloco 'senao' com tipo '%s'",
             tipo_para_string(if_tipo),
             tipo_para_string(else_tipo));
     yyerror_base(msg_erro, num_linha);

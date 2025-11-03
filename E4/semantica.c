@@ -3,9 +3,6 @@
 /* A pilha global de escopo */
 EscopoPilha *g_pilha_escopo = NULL;
 
-/* Função externa para pegar o número da linha atual */
-extern int get_line_number();
-
 /* ==================================================================== */
 /* =================== FUNÇÕES AUXILIARES PARA A AST ================== */
 /* ==================================================================== */
@@ -14,7 +11,7 @@ extern int get_line_number();
 asd_tree_t* criar_no_folha(ValorLexico* token, TipoDados tipo)
 {
     if (!token) return NULL;
-    asd_tree_t* no = asd_new(token->valor_token, tipo);
+    asd_tree_t* no = asd_new(token->valor_token, tipo, token->num_linha);
     free_token(token);
     return no;
 }
@@ -22,7 +19,7 @@ asd_tree_t* criar_no_folha(ValorLexico* token, TipoDados tipo)
 /* Cria um nó de operador unário */
 asd_tree_t* criar_no_unario(const char* op_label, TipoDados tipo, asd_tree_t* filho)
 {
-    asd_tree_t* no = asd_new(op_label, tipo);
+    asd_tree_t* no = asd_new(op_label, tipo, filho->num_linha);
     asd_add_child(no, filho);
     return no;
 }
@@ -30,7 +27,7 @@ asd_tree_t* criar_no_unario(const char* op_label, TipoDados tipo, asd_tree_t* fi
 /* Cria um nó de operador binário */
 asd_tree_t* criar_no_binario(const char* op_label, TipoDados tipo, asd_tree_t* filho1, asd_tree_t* filho2)
 {
-    asd_tree_t* no = asd_new(op_label, tipo);
+    asd_tree_t* no = asd_new(op_label, tipo, filho1->num_linha);
     asd_add_child(no, filho1);
     asd_add_child(no, filho2);
     return no;
@@ -148,7 +145,7 @@ asd_tree_t* semantica_chamada_func(ValorLexico* ident, asd_tree_t* lista_arg) {
     /* Cria o nó da chamada de função */
     char* label = malloc(strlen("call ") + strlen(ident->valor_token) + 1); /* label é 'call' seguido do nome da função */
     sprintf(label, "call %s", ident->valor_token);
-    asd_tree_t* no_call = asd_new(label, entrada->tipo_dado);
+    asd_tree_t* no_call = asd_new(label, entrada->tipo_dado, ident->num_linha);
     free(label);
 
     /* Verifica se há argumentos e pega a contagem */
@@ -228,10 +225,10 @@ asd_tree_t* semantica_chamada_func(ValorLexico* ident, asd_tree_t* lista_arg) {
 /* Função para tratar da semântica dos comandos de retorno de função */
 asd_tree_t* semantica_comando_ret(asd_tree_t* exp, TipoDados tipo) {
     /* Caso o tipo da expressão não seja o mesmo que o informado, indica erro */
-    if (exp->data_type != tipo) report_error_wrong_type_return_expr(get_line_number(), exp->data_type, tipo);
+    if (exp->data_type != tipo) report_error_wrong_type_return_expr(exp->num_linha, exp->data_type, tipo);
 
     /* Se o tipo de retorno não for o mesmo da função, indica erro */
-    if (tipo != g_pilha_escopo->tipo_retorno) report_error_wrong_type_return_func(get_line_number(), tipo, g_pilha_escopo->tipo_retorno);
+    if (tipo != g_pilha_escopo->tipo_retorno) report_error_wrong_type_return_func(exp->num_linha, tipo, g_pilha_escopo->tipo_retorno);
 
     return criar_no_unario("retorna", exp->data_type, exp); /* label é o lexema de TK_RETORNA */
 }
@@ -242,7 +239,8 @@ asd_tree_t* semantica_condicional(asd_tree_t* exp, asd_tree_t* bloco_if, asd_tre
     if (bloco_if) asd_add_child(no, bloco_if);
     if (bloco_else) {
         /* Se os tipos de dados do bloco do if e do bloco do else não forem compatíveis, indica erro */
-        if (bloco_if->data_type != bloco_else->data_type) report_error_wrong_type_if_else(get_line_number(), bloco_if->data_type, bloco_else->data_type);
+        /* Se o bloco if está vazio, assume que é do mesmo tipo do bloco else */
+        if (bloco_if && bloco_if->data_type != bloco_else->data_type) report_error_wrong_type_if_else(exp->num_linha, bloco_if->data_type, bloco_else->data_type);
 
         asd_add_child(no, bloco_else);
     }
@@ -287,10 +285,10 @@ asd_tree_t* semantica_identificador_variavel(ValorLexico* ident) {
 }
 
 /* Função para tratar da semântica das expressões binárias, verificando tipos e criando nó na árvore */
-asd_tree_t* semantica_expressoes_binarias(char* operador, asd_tree_t* filho1, asd_tree_t* filho2, int num_linha) {
+asd_tree_t* semantica_expressoes_binarias(char* operador, asd_tree_t* filho1, asd_tree_t* filho2) {
 
     /* Se os tipos dos dois lados da expressão não forem compatíveis, indica erro */
-    if (filho1->data_type != filho2->data_type) report_error_wrong_type_binary_op(num_linha, filho1->data_type, filho2->data_type, operador);
+    if (filho1->data_type != filho2->data_type) report_error_wrong_type_binary_op(filho1->num_linha, filho1->data_type, filho2->data_type, operador);
     
     return criar_no_binario(operador, filho1->data_type, filho1, filho2);
 }

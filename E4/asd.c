@@ -4,7 +4,7 @@
 #include "asd.h"
 #include "tipos.h"
 
-asd_tree_t *asd_new(const char *label, TipoDados data_type)
+asd_tree_t *asd_new(const char *label, TipoDados data_type, int num_linha)
 {
   asd_tree_t *ret = NULL;
   ret = calloc(1, sizeof(asd_tree_t));
@@ -12,6 +12,7 @@ asd_tree_t *asd_new(const char *label, TipoDados data_type)
     ret->label = strdup(label);
     ret->number_of_children = 0;
     ret->data_type = data_type;
+    ret->num_linha = num_linha;
     ret->children = NULL;
   }
   return ret;

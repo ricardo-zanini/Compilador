@@ -194,7 +194,7 @@ lista_argumentos_ini
 ;
 
 lista_argumentos
-    : expressao                         { $$ = asd_new("arg_list_temp", TIPO_INDEF); asd_add_child($$, $1); } /* Cria um novo nó 'arg_list' temporário */
+    : expressao                         { $$ = asd_new("arg_list_temp", TIPO_INDEF, $1->num_linha); asd_add_child($$, $1); } /* Cria um novo nó 'arg_list' temporário */
     | lista_argumentos ',' expressao    { asd_add_child($1, $3); $$ = $1; } /* Adiciona a nova expressão como filha do 'arg_list' existente */
 ;
 
@@ -262,39 +262,39 @@ tipo_valor
 
 /* EXPRESSÃO: Expressões possuem vários níveis de acordo com sua precedência, quanto maior o nível menor o grau de precedência. Podem haver operadores unários e binários */
 expressao 
-    : expressao '|' nivel_6 { $$ = semantica_expressoes_binarias("|", $1, $3, get_line_number()); }
+    : expressao '|' nivel_6 { $$ = semantica_expressoes_binarias("|", $1, $3); }
     | nivel_6               { $$ = $1; }
 ;
 
 nivel_6
-    : nivel_6 '&' nivel_5   { $$ = semantica_expressoes_binarias("&", $1, $3, get_line_number()); }
+    : nivel_6 '&' nivel_5   { $$ = semantica_expressoes_binarias("&", $1, $3); }
     | nivel_5               { $$ = $1; }
 ;
 
 nivel_5
-    : nivel_5 TK_OC_EQ nivel_4  { $$ = semantica_expressoes_binarias("==", $1, $3, get_line_number()); }
-    | nivel_5 TK_OC_NE nivel_4  { $$ = semantica_expressoes_binarias("!=", $1, $3, get_line_number()); }
+    : nivel_5 TK_OC_EQ nivel_4  { $$ = semantica_expressoes_binarias("==", $1, $3); }
+    | nivel_5 TK_OC_NE nivel_4  { $$ = semantica_expressoes_binarias("!=", $1, $3); }
     | nivel_4                   { $$ = $1; }
 ;
 
 nivel_4
-    : nivel_4 '<' nivel_3       { $$ = semantica_expressoes_binarias("<", $1, $3, get_line_number()); }
-    | nivel_4 '>' nivel_3       { $$ = semantica_expressoes_binarias(">", $1, $3, get_line_number()); }
-    | nivel_4 TK_OC_LE nivel_3  { $$ = semantica_expressoes_binarias("<=", $1, $3, get_line_number()); }
-    | nivel_4 TK_OC_GE nivel_3  { $$ = semantica_expressoes_binarias(">=", $1, $3, get_line_number()); }
+    : nivel_4 '<' nivel_3       { $$ = semantica_expressoes_binarias("<", $1, $3); }
+    | nivel_4 '>' nivel_3       { $$ = semantica_expressoes_binarias(">", $1, $3); }
+    | nivel_4 TK_OC_LE nivel_3  { $$ = semantica_expressoes_binarias("<=", $1, $3); }
+    | nivel_4 TK_OC_GE nivel_3  { $$ = semantica_expressoes_binarias(">=", $1, $3); }
     | nivel_3                   { $$ = $1; }
 ;
 
 nivel_3
-    : nivel_3 '+' nivel_2   { $$ = semantica_expressoes_binarias("+", $1, $3, get_line_number()); }
-    | nivel_3 '-' nivel_2   { $$ = semantica_expressoes_binarias("-", $1, $3, get_line_number()); }
+    : nivel_3 '+' nivel_2   { $$ = semantica_expressoes_binarias("+", $1, $3); }
+    | nivel_3 '-' nivel_2   { $$ = semantica_expressoes_binarias("-", $1, $3); }
     | nivel_2               { $$ = $1; }
 ;
 
 nivel_2
-    : nivel_2 '*' nivel_1   { $$ = semantica_expressoes_binarias("*", $1, $3, get_line_number()); }
-    | nivel_2 '/' nivel_1   { $$ = semantica_expressoes_binarias("/", $1, $3, get_line_number()); }
-    | nivel_2 '%' nivel_1   { $$ = semantica_expressoes_binarias("%", $1, $3, get_line_number()); }
+    : nivel_2 '*' nivel_1   { $$ = semantica_expressoes_binarias("*", $1, $3); }
+    | nivel_2 '/' nivel_1   { $$ = semantica_expressoes_binarias("/", $1, $3); }
+    | nivel_2 '%' nivel_1   { $$ = semantica_expressoes_binarias("%", $1, $3); }
     | nivel_1               { $$ = $1; }
 ;
 
