@@ -32,7 +32,8 @@ typedef struct tabela_simbolos {
 typedef struct escopo_pilha {
     TabelaSimbolos *tabela_atual;
     struct escopo_pilha *escopo_pai; // Link para o escopo anterior (a base da pilha)
-    TipoDados tipo_retorno; // Qual o tipo de retorno compatível com o do escopo (função) atual
+    TipoDados tipo_retorno; // Tipo de retorno compatível com o do escopo (função) atual
+    struct simbolo *funcao_atual; // Ponteiro para a entrada da função atual
 } EscopoPilha;
 
 
@@ -50,5 +51,8 @@ ValorLexico* duplicar_valor_lexico(ValorLexico *lex);
 // Funções de criação de entradas (helpers)
 Simbolo* create_entry_var(char *chave, TipoDados tipo, ValorLexico *lex);
 Simbolo* create_entry_fun(char *chave, TipoDados tipo_retorno, ValorLexico *lex);
+
+/* Libera uma lista de parâmetros/argumentos (ArgLista) */
+void free_arg_list(ArgLista* list);
 
 #endif //_TABELA_H_

@@ -13,6 +13,7 @@ void stack_push(EscopoPilha **pilha) {
     novo_escopo->tabela_atual = (TabelaSimbolos*) malloc(sizeof(TabelaSimbolos));
     novo_escopo->tabela_atual->hash_table = NULL; // uthash inicializa com NULL
     novo_escopo->escopo_pai = *pilha; // Aponta para o escopo anterior
+    novo_escopo->funcao_atual = NULL;
 
     if (*pilha != NULL) {
         // Herda o tipo de retorno do escopo pai
@@ -62,6 +63,7 @@ void stack_pop(EscopoPilha **pilha)
             while (arg_atual != NULL) {
                 ArgLista *arg_temp = arg_atual;
                 arg_atual = arg_atual->next;
+                free(arg_temp->nome);
                 free(arg_temp);
             }
         }
@@ -165,4 +167,15 @@ Simbolo* create_entry_fun(char *chave, TipoDados tipo_retorno, ValorLexico *lex)
     memset(&(nova_entrada->hh), 0, sizeof(UT_hash_handle));
 
     return nova_entrada;
+}
+
+/* Libera uma lista de argumentos (ArgLista) */
+void free_arg_list(ArgLista* list) {
+    ArgLista* curr = list;
+    while(curr) {
+        ArgLista* temp = curr;
+        curr = curr->next;
+        free(temp->nome);
+        free(temp);
+    }
 }

@@ -43,6 +43,23 @@ void asd_add_child(asd_tree_t *tree, asd_tree_t *child)
   }
 }
 
+/*
+ * Função asd_detach_children, libera o array de filhos de um nó,
+ * mas não os filhos em si. Define o número de filhos como 0.
+ */
+void asd_detach_children(asd_tree_t *tree)
+{
+    if (tree != NULL) {
+        if (tree->children != NULL) {
+            free(tree->children);
+        }
+        tree->children = NULL;
+        tree->number_of_children = 0;
+    } else {
+        printf("Erro: %s recebeu parâmetro tree = %p.\n", __FUNCTION__, tree);
+    }
+}
+
 static void _asd_print (FILE *foutput, asd_tree_t *tree, int profundidade)
 {
   int i;

@@ -33,4 +33,9 @@ void report_error_wrong_type_return_expr(int num_linha, TipoDados expr_tipo, Tip
 void report_error_wrong_type_return_func(int num_linha, TipoDados decl_tipo, TipoDados func_tipo);
 void report_error_wrong_type_if_else(int num_linha, TipoDados if_tipo, TipoDados else_tipo);
 
+/* Verificação de Argumentos/Parâmetros de Função */
+void report_error_missing_args(ValorLexico *fun_token, int esperado, int recebido);
+void report_error_excess_args(ValorLexico *fun_token, int esperado, int recebido);
+void report_error_wrong_type_args(ValorLexico *fun_token, int arg_num, TipoDados esperado, TipoDados recebido);
+
 #endif // _ERROS_H_

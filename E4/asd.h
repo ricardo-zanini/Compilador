@@ -26,6 +26,12 @@ void asd_free(asd_tree_t *tree);
 void asd_add_child(asd_tree_t *tree, asd_tree_t *child);
 
 /*
+ * Função asd_detach_children, libera o array de filhos de um nó,
+ * mas não os filhos em si. Define o número de filhos como 0.
+ */
+void asd_detach_children(asd_tree_t *tree);
+
+/*
  * Função asd_print, imprime recursivamente a árvore.
  */
 void asd_print(asd_tree_t *tree);
