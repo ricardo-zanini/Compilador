@@ -1,0 +1,8 @@
+//ERR_UNDECLARED
+f -> inteiro := [
+  var c := inteiro
+  se (c) []senao[
+     var b := inteiro
+  ]
+  b := 2
+];

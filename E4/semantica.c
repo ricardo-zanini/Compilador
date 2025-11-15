@@ -75,11 +75,14 @@ void semantica_funcao_declaracao(ValorLexico* ident, TipoDados tipo) {
     g_pilha_escopo->funcao_atual = entrada_fun;
 }
 
-/* Função para tratar da semântica da definição das funções (parâmetros e ações finais) */
-asd_tree_t* semantica_funcao_definicao(ValorLexico* ident, TipoDados tipo, ArgLista* lista_param, asd_tree_t* corpo) {
-    /* Anexa a lista de parâmetros ao símbolo da função */
-    if (g_pilha_escopo->funcao_atual) {
+/* Função para tratar da semântica de atualização da lista de parâmetros de uma função */
+void semantica_funcao_atualizar_args(ArgLista* lista_param) {
+    /* Verifica se estamos em um escopo de função */
+    if (g_pilha_escopo && g_pilha_escopo->funcao_atual) {
+        
+        /* Atualiza o símbolo da função (que está no escopo pai) */
         g_pilha_escopo->funcao_atual->argumentos = lista_param;
+        
         /* Conta os parâmetros */
         int count = 0;
         ArgLista* node = lista_param;
@@ -89,14 +92,17 @@ asd_tree_t* semantica_funcao_definicao(ValorLexico* ident, TipoDados tipo, ArgLi
         }
         g_pilha_escopo->funcao_atual->num_argumentos = count;
     }
+}
 
+/* Função para tratar da semântica da definição das funções */
+asd_tree_t* semantica_funcao_definicao(ValorLexico* ident, TipoDados tipo, asd_tree_t* corpo) {
+    
     /* Destrói o escopo da função */
     semantica_pop_scope(); 
 
     /* Cria o nó da função*/
     asd_tree_t* no = criar_no_folha(ident, tipo);
 
-    (void)lista_param; /* Silencia warnings*/
     if (corpo) asd_add_child(no, corpo);
 
     return no;

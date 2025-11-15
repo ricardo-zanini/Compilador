@@ -86,19 +86,21 @@ void symbol_insert(EscopoPilha *pilha, char *chave, Simbolo *entrada) {
         exit(1); // Erro interno
     }
 
-    Simbolo *entrada_existente = NULL;
-    HASH_FIND_STR(pilha->tabela_atual->hash_table, chave, entrada_existente);
+    /* Verifica se já foi declarado (no escopo atual ou nos escopos pais) */
+    Simbolo *entrada_existente = symbol_lookup_local(pilha, chave);
 
     if (entrada_existente != NULL) {
         // Erro: Dupla declaração 
         report_error_declared(entrada->valor_lexico, entrada_existente);
     } else {
+        /* Se não foi declarado, insere no escopo atual */
         HASH_ADD_KEYPTR(hh, pilha->tabela_atual->hash_table, 
                         entrada->chave, strlen(entrada->chave), entrada);
     }
+    
 }
 
-/* Busca um símbolo em todos os escopos, do topo à base  */
+/* Busca um símbolo em todos os escopos, do topo à base */
 Simbolo* symbol_lookup(EscopoPilha *pilha, char *chave) {
     EscopoPilha *escopo_atual = pilha;
     Simbolo *entrada_encontrada = NULL;
@@ -112,6 +114,17 @@ Simbolo* symbol_lookup(EscopoPilha *pilha, char *chave) {
     }
 
     return NULL; // Não encontrou em nenhum escopo
+}
+
+/* Busca um símbolo apenas no escopo do topo */
+Simbolo* symbol_lookup_local(EscopoPilha *pilha, char *chave) {
+    if (pilha == NULL || pilha->tabela_atual == NULL) {
+        return NULL;
+    }
+
+    Simbolo *entrada_encontrada = NULL;
+    HASH_FIND_STR(pilha->tabela_atual->hash_table, chave, entrada_encontrada);
+    return entrada_encontrada;
 }
 
 /* Função auxiliar para duplicar o ValorLexico */

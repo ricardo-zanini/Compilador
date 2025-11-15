@@ -1,0 +1,4 @@
+var b := inteiro,
+f -> inteiro := [
+  b := 2
+];

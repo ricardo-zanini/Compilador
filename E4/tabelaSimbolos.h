@@ -44,6 +44,7 @@ void stack_pop(EscopoPilha **pilha);
 // Inserção e Busca
 void symbol_insert(EscopoPilha *pilha, char *chave, Simbolo *entrada);
 Simbolo* symbol_lookup(EscopoPilha *pilha, char *chave);
+Simbolo* symbol_lookup_local(EscopoPilha *pilha, char *chave);
 
 /* Função auxiliar para duplicar o ValorLexico */
 ValorLexico* duplicar_valor_lexico(ValorLexico *lex);

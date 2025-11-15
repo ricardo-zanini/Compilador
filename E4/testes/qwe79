@@ -1,0 +1,11 @@
+//ERR_WRONG_TYPE
+f -> inteiro := [
+  var c := inteiro
+  se (c) [
+    var a := inteiro
+    enquanto(a) []
+  ]senao[
+    var b := decimal
+    se(b) []
+  ]
+];

@@ -77,7 +77,7 @@
 %token TK_ER
 
 /* Define o tipo de retorno para as regras da gramática */
-%type <ast_node> programa lista elemento funcao comando_simples bloco_comandos bloco_comandos_conteudo bloco_comandos_conteudo_lista
+%type <ast_node> programa lista elemento funcao comando_simples bloco_comandos bloco_comandos_funcao bloco_comandos_conteudo bloco_comandos_conteudo_lista
 %type <ast_node> comando_atribuicao chamada_funcao lista_argumentos_ini lista_argumentos comando_retorno
 %type <ast_node> comando_controle_fluxo condicional condicional_else repeticao
 %type <ast_node> declaracao_variavel_no_ini declaracao_variavel atribuicao tipo_valor
@@ -128,7 +128,9 @@ elemento
 /* FUNÇÃO: Definição de função, que possui um cabeçalho com zero ou mais parâmetros, seguido por um corpo */
 /* A ação semântica cria um nó na AST com o nome da função. O bloco de comandos é adicionado como filho caso não seja vazio. */
 funcao
-    : TK_ID TK_SETA tipo { semantica_funcao_declaracao($1, $3); } lista_parametros_ini TK_ATRIB bloco_comandos { $$ = semantica_funcao_definicao($1, $3, $5, $7); }
+    : TK_ID TK_SETA tipo                { semantica_funcao_declaracao($1, $3); }
+        lista_parametros_ini            { semantica_funcao_atualizar_args($5); }
+        TK_ATRIB bloco_comandos_funcao  { $$ = semantica_funcao_definicao($1, $3, $8); }
 ;
 
 /* CABEÇALHO DA FUNÇÃO: Pode ter zero ou mais parâmetros (O TOKEN TK_COM É OPCIONAL!!) */
@@ -147,6 +149,10 @@ lista_parametros
 parametro
     : TK_ID TK_ATRIB tipo { $$ = semantica_param($1, $3); }
 ;
+
+/* BLOCO DE COMANDOS DE FUNÇÃO: mesma semântica do bloco de comandos normal, mas sem push/pop */
+bloco_comandos_funcao
+    : '[' bloco_comandos_conteudo ']' { $$ = $2; }
 
 /* ==================================================================== */
 /* ========================= COMANDOS SIMPLES ========================= */

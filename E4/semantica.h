@@ -27,7 +27,8 @@ void semantica_pop_scope_error();
 
 /* Funções para tratar da semântica das funções */
 void semantica_funcao_declaracao(ValorLexico* ident, TipoDados tipo);
-asd_tree_t* semantica_funcao_definicao(ValorLexico* ident, TipoDados tipo, ArgLista* lista_param, asd_tree_t* corpo);
+void semantica_funcao_atualizar_args(ArgLista* lista_param);
+asd_tree_t* semantica_funcao_definicao(ValorLexico* ident, TipoDados tipo, asd_tree_t* corpo);
 
 /* Função para tratar da semântica dos parâmetros de funções */
 ArgLista* semantica_param(ValorLexico* ident, TipoDados tipo);

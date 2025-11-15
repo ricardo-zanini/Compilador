@@ -1,0 +1,6 @@
+//ERR_WRONG_TYPE_ARGS
+h -> inteiro com a := decimal := [],
+f -> inteiro := [
+  var b := inteiro
+  h(b)
+];
