@@ -1,0 +1,7 @@
+//ERR_FUNCTION
+h -> inteiro com a := inteiro := [],
+g -> inteiro := [],
+f -> inteiro := [
+  var a := inteiro
+  a := h(g)
+];

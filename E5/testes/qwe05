@@ -1,0 +1,7 @@
+var b := inteiro,
+f -> inteiro := [
+  var c := inteiro
+  se (c) [
+     b := 2
+  ]
+];

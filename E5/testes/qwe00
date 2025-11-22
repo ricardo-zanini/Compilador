@@ -1,0 +1,4 @@
+//ERR_UNDECLARED
+f -> inteiro := [
+  a := 2
+];

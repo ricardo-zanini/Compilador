@@ -1,0 +1,8 @@
+var b := inteiro,
+f -> inteiro := [
+  var c := inteiro
+  se (c) [
+  ]senao[
+     b := 2
+  ]
+];

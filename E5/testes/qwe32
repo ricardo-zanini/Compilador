@@ -1,0 +1,5 @@
+f -> inteiro com a := inteiro := [],
+g -> inteiro := [
+  var b := inteiro
+  f(b)
+];

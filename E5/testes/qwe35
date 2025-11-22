@@ -1,0 +1,5 @@
+//ERR_VARIABLE
+f -> inteiro := [
+  var b := inteiro
+  b()
+];

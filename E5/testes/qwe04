@@ -1,0 +1,6 @@
+var b := inteiro,
+f -> inteiro := [
+  var a := inteiro com 10
+  a := 20
+  enquanto(a<50)[a:= a + 1]
+];
