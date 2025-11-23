@@ -1,0 +1,5 @@
+//ERR_MISSING_ARGS
+h -> inteiro com a := inteiro, b := inteiro := [],
+f -> inteiro := [
+  h()
+];

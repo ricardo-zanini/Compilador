@@ -1,0 +1,9 @@
+h -> inteiro := [
+  retorna 2 := inteiro
+],
+g -> inteiro := [
+  h()
+],
+f -> inteiro := [
+  g()
+];

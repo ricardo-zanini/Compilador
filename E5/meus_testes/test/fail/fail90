@@ -1,0 +1,4 @@
+//ERR_UNDECLARED
+f -> inteiro := [
+  missing90 := 7
+];

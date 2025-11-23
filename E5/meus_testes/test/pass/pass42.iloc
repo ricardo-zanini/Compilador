@@ -1,0 +1,14 @@
+loadI 4 => r0
+storeAI r0 => rfp, 0
+L0: nop
+loadAI rfp, 0 => r1
+cbr r1 -> L1, L2
+L1: nop
+loadI 1 => r3
+rsubI r3, 0 => r4
+loadAI rfp, 0 => r2
+add r2, r4 => r5
+storeAI r5 => rfp, 0
+jumpI -> L0
+L2: nop
+loadAI rfp, 0 => r6

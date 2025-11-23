@@ -1,0 +1,5 @@
+//ERR_EXCESS_ARGS
+f -> inteiro := [
+  var a := inteiro
+  f(a)
+];

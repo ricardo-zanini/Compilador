@@ -1,0 +1,11 @@
+f -> inteiro := [
+  var n := inteiro
+  n := 2
+  enquanto(n) [
+    se (n) [
+      n := n + (-1)
+    ]senao[
+      n := 0
+    ]
+  ]
+];

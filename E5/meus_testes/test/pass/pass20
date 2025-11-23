@@ -1,0 +1,13 @@
+f -> inteiro := [
+  var flag := inteiro
+  flag := 1
+  se (flag) [
+    var counter := inteiro
+    counter := 3
+    enquanto(counter) [
+      counter := counter + (-1)
+    ]
+  ]senao[
+    flag := 0
+  ]
+];

@@ -1,0 +1,12 @@
+aux -> inteiro := [
+  retorna 0 := inteiro
+],
+f -> inteiro := [
+  var cond := inteiro
+  cond := 1
+  se (cond) [
+    aux()
+  ]senao[
+    cond := 0
+  ]
+];

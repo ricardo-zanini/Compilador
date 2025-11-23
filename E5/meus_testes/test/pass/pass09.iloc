@@ -1,0 +1,46 @@
+loadI 1 => r0
+storeAI r0 => rbss, 0
+loadI 2 => r1
+storeAI r1 => rfp, 0
+loadI 0 => r2
+storeAI r2 => rfp, 4
+L3: nop
+loadAI rfp, 0 => r3
+cbr r3 -> L4, L5
+L4: nop
+loadAI rbss, 0 => r4
+cbr r4 -> L0, L1
+L0: nop
+loadI 1 => r6
+rsubI r6, 0 => r7
+loadAI rbss, 0 => r5
+add r5, r7 => r8
+storeAI r8 => rbss, 0
+jumpI -> L2
+L1: nop
+loadI 1 => r10
+loadAI rbss, 0 => r9
+add r9, r10 => r11
+storeAI r11 => rbss, 0
+L2: nop
+loadI 1 => r13
+loadAI rfp, 4 => r12
+add r12, r13 => r14
+storeAI r14 => rfp, 4
+loadI 1 => r16
+rsubI r16, 0 => r17
+loadAI rfp, 0 => r15
+add r15, r17 => r18
+storeAI r18 => rfp, 0
+jumpI -> L3
+L5: nop
+loadAI rfp, 4 => r19
+cbr r19 -> L6, L7
+L6: nop
+loadAI rfp, 4 => r21
+loadAI rbss, 0 => r20
+add r20, r21 => r22
+storeAI r22 => rbss, 0
+jumpI -> L8
+L7: nop
+L8: nop

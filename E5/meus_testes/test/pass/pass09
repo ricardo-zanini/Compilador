@@ -1,0 +1,21 @@
+var status := inteiro,
+
+f -> inteiro := [
+  var limit := inteiro
+  var flips := inteiro
+  status := 1
+  limit := 2
+  flips := 0
+  enquanto(limit) [
+    se (status) [
+      status := status + (-1)
+    ]senao[
+      status := status + 1
+    ]
+    flips := flips + 1
+    limit := limit + (-1)
+  ]
+  se (flips) [
+    status := status + flips
+  ]
+];

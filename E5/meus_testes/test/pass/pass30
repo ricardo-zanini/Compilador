@@ -1,0 +1,12 @@
+f -> inteiro := [
+  var v := inteiro
+  v := 4
+  enquanto(v) [
+    se (v) [
+      v := v + (-1)
+    ]senao[
+      v := 0
+    ]
+  ]
+  retorna v := inteiro
+];

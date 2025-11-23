@@ -1,0 +1,8 @@
+L0: nop
+loadAI rfp, 0 => r0
+cbr r0 -> L1, L2
+L1: nop
+loadI 2 => r1
+storeAI r1 => rbss, 0
+jumpI -> L0
+L2: nop

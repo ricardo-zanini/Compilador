@@ -1,0 +1,9 @@
+var total := inteiro,
+f -> inteiro := [
+  total := 4
+  var i := inteiro
+  i := total
+  enquanto(i) [
+    i := i + (-1)
+  ]
+];

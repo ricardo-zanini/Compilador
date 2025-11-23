@@ -1,0 +1,13 @@
+f -> inteiro := [
+  var first := inteiro
+  var second := inteiro
+  first := 3
+  second := 7
+  enquanto(first) [
+    first := first + (-1)
+  ]
+  enquanto(second) [
+    second := second + (-1)
+  ]
+  retorna second := inteiro
+];

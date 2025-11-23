@@ -1,0 +1,12 @@
+var counter := inteiro,
+f -> inteiro := [
+  counter := 3
+  enquanto(counter) [
+    se (counter) [
+      counter := counter + (-1)
+    ]senao[
+      counter := 0
+    ]
+  ]
+  retorna counter := inteiro
+];

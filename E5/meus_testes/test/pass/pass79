@@ -1,0 +1,15 @@
+f -> inteiro := [
+  var flag := inteiro
+  var result := inteiro
+  flag := 6
+  result := 0
+  se (flag) [
+    result := flag + 1
+  ]senao[
+    result := result + 1
+  ]
+  enquanto(result) [
+    result := result + (-1)
+  ]
+  retorna flag := inteiro
+];

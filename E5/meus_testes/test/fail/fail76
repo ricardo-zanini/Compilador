@@ -1,0 +1,6 @@
+//ERR_DECLARED
+f -> inteiro := [
+  var shadow := inteiro
+  var shadow := inteiro
+  shadow := 7
+];

@@ -1,0 +1,10 @@
+var x := inteiro,
+init -> inteiro := [
+  x := 7
+],
+f -> inteiro := [
+  init()
+  enquanto(x) [
+    x := x + (-1)
+  ]
+];

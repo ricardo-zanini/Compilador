@@ -1,0 +1,12 @@
+f -> inteiro := [
+  var flag := inteiro
+  flag := 0
+  se (flag) [
+    flag := 10
+  ]senao[
+    flag := flag + 1
+    se (flag) [
+      flag := flag + 2
+    ]
+  ]
+];

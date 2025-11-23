@@ -1,0 +1,15 @@
+var glob := inteiro,
+
+f -> inteiro := [
+  var snapshot := inteiro
+  glob := 3
+  snapshot := 0
+  enquanto(glob) [
+    snapshot := glob
+    se (snapshot) [
+      glob := glob + (-1)
+    ]senao[
+      glob := 0
+    ]
+  ]
+];

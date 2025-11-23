@@ -1,0 +1,4 @@
+f -> inteiro := [],
+g -> inteiro := [
+  f()
+];

@@ -1,0 +1,5 @@
+//ERR_WRONG_TYPE
+f -> inteiro := [
+  var number := inteiro
+  number := 2.5
+];

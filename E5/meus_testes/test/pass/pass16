@@ -1,0 +1,7 @@
+f -> inteiro := [
+  var c := inteiro
+  c := 3
+  enquanto(c) [
+    c := c + (-1)
+  ]
+];

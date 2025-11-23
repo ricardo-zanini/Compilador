@@ -1,0 +1,11 @@
+var global := inteiro,
+
+f -> inteiro := [
+  var local := inteiro
+  global := 5
+  local := global + 2
+  enquanto(local) [
+    local := local + (-1)
+  ]
+  retorna global := inteiro
+];

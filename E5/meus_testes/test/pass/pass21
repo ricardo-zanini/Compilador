@@ -1,0 +1,5 @@
+var global := inteiro,
+f -> inteiro := [
+  global := 10
+  retorna global := inteiro
+];

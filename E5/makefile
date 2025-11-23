@@ -30,7 +30,7 @@ ASD_HEADER = asd.h
 TABELA_HEADER = tabelaSimbolos.h
 ERROS_HEADER = erros.h
 SEMANTICA_HEADER = semantica.h
-ILOC_HEADER = iloc.c
+ILOC_HEADER = iloc.h
 HEADERS = uthash.h tipos.h
 
 # --- Agrupamento de Objetos ---
@@ -81,7 +81,7 @@ clean:
 
 # ============== COMPACTAR ==============
 tgz: clean
-	@tar -czvf $(EXEC).tgz $(SEMANTICA_SOURCE) $(SEMANTICA_HEADER) $(ERROS_SOURCE) $(ERROS_HEADER) $(TABELA_SOURCE) $(TABELA_HEADER) $(ASD_SOURCE) $(ASD_HEADER) $(HEADERS) $(MAIN_SOURCE) $(SELF) $(BISON_FILE) $(FLEX_FILE)
+	@tar -czvf $(EXEC).tgz $(ILOC_SOURCE) $(ILOC_HEADER) $(SEMANTICA_SOURCE) $(SEMANTICA_HEADER) $(ERROS_SOURCE) $(ERROS_HEADER) $(TABELA_SOURCE) $(TABELA_HEADER) $(ASD_SOURCE) $(ASD_HEADER) $(HEADERS) $(MAIN_SOURCE) $(SELF) $(BISON_FILE) $(FLEX_FILE)
 	@echo "Compactação concluída 📦"
 
 # Inclui os arquivos de dependência .d gerados

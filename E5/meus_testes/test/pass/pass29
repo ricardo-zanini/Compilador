@@ -1,0 +1,11 @@
+ping -> inteiro := [
+  retorna 0 := inteiro
+],
+f -> inteiro := [
+  var count := inteiro
+  count := 1
+  enquanto(count) [
+    ping()
+    count := count + (-1)
+  ]
+];

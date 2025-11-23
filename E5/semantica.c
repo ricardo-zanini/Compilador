@@ -121,72 +121,84 @@ asd_tree_t* criar_no_binario(const char* op_label, TipoDados tipo, asd_tree_t* f
     ListaILOC* lista_codigo = NULL;
     char* temporario_retorno = NULL;
     
+    // Operação de soma
     if(strcmp(op_label, "+") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_aritmetica("add", filho1->temp, filho2->temp, temporario_retorno));
         
+    // Operação de subtração
     }else if(strcmp(op_label, "-") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_aritmetica("sub", filho1->temp, filho2->temp, temporario_retorno));
 
+    // Operação de multipliação
     }else if(strcmp(op_label, "*") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_aritmetica("mult", filho1->temp, filho2->temp, temporario_retorno));
 
+    // Operação de divisão
     }else if(strcmp(op_label, "/") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_aritmetica("div", filho1->temp, filho2->temp, temporario_retorno));
 
+    // Operação de "menor que"
     }else if(strcmp(op_label, "<") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_comparacao("cmp_LT", filho1->temp, filho2->temp, temporario_retorno));
 
+    // Operação de "maior que"
     }else if(strcmp(op_label, ">") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_comparacao("cmp_GT", filho1->temp, filho2->temp, temporario_retorno));
 
+    // Operação de "menor ou igual que"
     }else if(strcmp(op_label, "<=") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_comparacao("cmp_LE", filho1->temp, filho2->temp, temporario_retorno));
 
+    // Operação de maior ou igual que
     }else if(strcmp(op_label, ">=") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_comparacao("cmp_GE", filho1->temp, filho2->temp, temporario_retorno));
 
+    // Operação de "igual"
     }else if(strcmp(op_label, "==") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_comparacao("cmp_EQ", filho1->temp, filho2->temp, temporario_retorno));
 
+    // Operação de "diferente de"
     }else if(strcmp(op_label, "!=") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_comparacao("cmp_NE", filho1->temp, filho2->temp, temporario_retorno));
-
+    
+    // Operação de and lógico
     }else if(strcmp(op_label, "&") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
         temporario_retorno = gerar_temporario();
         adicionar_operacao(lista_codigo, criar_comparacao("and", filho1->temp, filho2->temp, temporario_retorno));
 
+    // Operação de or lógico
     }else if(strcmp(op_label, "|") == 0){
         ordem = ORD_INV;
         lista_codigo = criar_lista_iloc();
@@ -309,12 +321,14 @@ asd_tree_t* semantica_comando_atrib(ValorLexico* ident, asd_tree_t* exp) {
     // Variaveis necessárias para geração de código
     ListaILOC* lista_codigo = criar_lista_iloc();
 
+    // Operação de store do valor da atribuição
     adicionar_operacao(lista_codigo, criar_storeAI(
         exp->temp,
         (entrada->is_global == 1) ? "rbss" : "rfp", 
         entrada->deslocamento
     ));
     
+    // Criação dos nós de atribuição
     asd_tree_t* no_identificador = criar_no_folha(ident, entrada->tipo_dado, entrada->natureza);
     asd_tree_t* no = asd_new(":=", entrada->tipo_dado, no_identificador->num_linha, exp->temp, lista_codigo); /* label é o lexema de TK_ATRIB */
 
@@ -523,9 +537,11 @@ asd_tree_t* semantica_enquanto(asd_tree_t* exp, asd_tree_t* bloco){
     adicionar_operacao(lista_bloco, criar_jumpI(rotulo_test));
     adicionar_operacao(lista_bloco, criar_nop_com_rotulo(rotulo_fim_loop));
 
+    // criação e adição de nós na árvore
     asd_tree_t* no = asd_new("enquanto", exp->data_type, exp->num_linha, NULL, lista_codigo);
     asd_add_child(no, exp, ORD_INV);
         
+    // Se o bloco do enquanto realmente existiu, o adiciona na árvore, senão somente concatena com lista artificial
     if (bloco){
         asd_add_child(no, bloco, ORD_NORM);
     }else{
@@ -544,6 +560,7 @@ asd_tree_t* semantica_declaracao_variavel_no_ini(ValorLexico* ident, TipoDados t
     Simbolo *entrada = create_entry_var(ident->valor_token, tipo, ident);
     symbol_insert(g_pilha_escopo, ident->valor_token, entrada);
 
+    // Modificar entrada na tabela de símbolos com valor de deslocamento e informação de escopo local/global
     processar_declaracao_var(entrada);
 
     free_token(ident);
@@ -555,29 +572,29 @@ asd_tree_t* semantica_declaracao_variavel(ValorLexico* ident, TipoDados tipo, as
     Simbolo *entrada = create_entry_var(ident->valor_token, tipo, ident);
     symbol_insert(g_pilha_escopo, ident->valor_token, entrada);
 
+    // Modificar entrada na tabela de símbolos com valor de deslocamento e informação de escopo local/global
+    processar_declaracao_var(entrada);
+
     if (atrib) {
         /* Se os tipo da vairável é diferente do tipo da atribuição, indica erro */
         if (atrib->data_type != tipo) report_error_wrong_type_initialization(ident, tipo, atrib->data_type);
 
-        processar_declaracao_var(entrada);
-
         // Variaveis necessárias para geração de código
         ListaILOC* lista_codigo = criar_lista_iloc();
         char* temporario_retorno;
-
-
         temporario_retorno = gerar_temporario();
 
+        // Operação de store do valor com inicialização
         adicionar_operacao(lista_codigo, criar_storeAI(
             atrib->temp,
             (entrada->is_global == 1) ? "rbss" : "rfp", 
             entrada->deslocamento
         ));
 
+        // Criação e adição de nós na árvore
         asd_tree_t* no_identificador = criar_no_folha(ident, tipo, NAT_IDENTIFICADOR);
         asd_tree_t* no = asd_new("com", tipo, no_identificador->num_linha, temporario_retorno, lista_codigo);
 
-        
         asd_add_child(no, no_identificador, ORD_NORM);
         asd_add_child(no, atrib, ORD_INV);
         

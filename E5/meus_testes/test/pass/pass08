@@ -1,0 +1,13 @@
+f -> inteiro := [
+  var outer := inteiro
+  var inner := inteiro
+  outer := 2
+  inner := 0
+  enquanto(outer) [
+    inner := 1
+    enquanto(inner) [
+      inner := inner + (-1)
+      outer := outer + (-1)
+    ]
+  ]
+];

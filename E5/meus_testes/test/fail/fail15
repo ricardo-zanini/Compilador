@@ -1,0 +1,7 @@
+//ERR_DECLARED
+f -> inteiro := [
+  [
+    var b := inteiro
+    var b := inteiro
+  ]
+];

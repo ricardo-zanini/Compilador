@@ -1,0 +1,16 @@
+var store := inteiro,
+
+f -> inteiro := [
+  var loops := inteiro
+  store := 9
+  loops := 3
+  enquanto(loops) [
+    se (store) [
+      store := store + (-1)
+    ]senao[
+      store := store + 1
+    ]
+    loops := loops + (-1)
+  ]
+  retorna store := inteiro
+];

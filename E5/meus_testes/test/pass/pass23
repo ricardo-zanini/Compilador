@@ -1,0 +1,11 @@
+f -> inteiro := [
+  var x := inteiro
+  x := 2
+  enquanto(x) [
+    x := x + (-1)
+  ]
+  x := 3
+  enquanto(x) [
+    x := x + (-1)
+  ]
+];

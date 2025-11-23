@@ -1,0 +1,10 @@
+//ERR_WRONG_TYPE
+var glob := inteiro,
+
+g -> inteiro := [
+  glob := 3
+];
+
+f -> inteiro := [
+  retorna glob := decimal
+];

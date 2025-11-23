@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- CONFIGURAÇÃO ---
-COMPILER="./etapa4"
+COMPILER="./etapa5"
 TEST_DIR="testes"
 PREFIX="qwe"
 ERROR_HEADER="erros.h" # Caminho para seu arquivo de cabeçalho de erros

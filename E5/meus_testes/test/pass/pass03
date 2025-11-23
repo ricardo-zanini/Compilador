@@ -1,0 +1,7 @@
+var b := inteiro,
+f -> inteiro := [
+  var c := inteiro
+  enquanto (c) [
+     b := 2
+  ]
+];

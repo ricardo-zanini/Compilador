@@ -1,0 +1,11 @@
+var g := inteiro,
+f -> inteiro := [
+  var c := inteiro
+  c := 2
+  se (c) [
+    c := c + (-1)
+  ]senao[
+    c := c + 1
+  ]
+  retorna c := inteiro
+];

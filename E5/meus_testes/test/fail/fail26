@@ -1,0 +1,4 @@
+//ERR_FUNCTION
+f -> inteiro := [
+  f := 2
+];

@@ -1,0 +1,6 @@
+//ERR_WRONG_TYPE
+f -> inteiro := [
+  var a := inteiro
+  var b := decimal
+  a := a*b
+];

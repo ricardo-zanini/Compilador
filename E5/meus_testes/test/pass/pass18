@@ -1,0 +1,8 @@
+f -> inteiro := [
+  var a := inteiro
+  a := 5
+  enquanto(a) [
+    a := a + (-1)
+  ]
+  retorna a := inteiro
+];
