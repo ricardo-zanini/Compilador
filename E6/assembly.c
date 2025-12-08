@@ -8,19 +8,18 @@
 /* Mapeamento para Registradores */
 #define QTD_REG_FISICOS 4
 
-/* Lista de registradores voláteis (Não precisam de push/pop na main) */
-/* Funciona com registradores, mas testes do professor não funcionaram em alguns casos (que não conseguimos reproduzir por conta) */
-static const char *reg_fisicos[QTD_REG_FISICOS] = {
-    "%r8d", "%r9d", "%r10d", "%r11d"
+/* Lista de registradores "Callee-Saved" (Seguros entre chamadas) */
+const char *reg_fisicos[QTD_REG_FISICOS] = {
+    "%ebx", "%r12d", "%r13d", "%r14d"
 };
 
 /* Variável global para rastrear o maior registro temporário usado (para alocar stack) */
-static int max_reg_idx = 0;
+int max_reg_idx = 0;
 
 /* Variáveis de Estado para Peephole */
-static int cache_offset = -9999;
-static char *cache_base = NULL;
-static int cache_valido = 0; // 0 = inválido, 1 = válido
+int cache_offset = -9999;
+char *cache_base = NULL;
+int cache_valido = 0; // 0 = inválido, 1 = válido
 
 /* ================================================================= */
 /* ==================== FUNÇÕES AUXILIARES ========================= */
@@ -128,6 +127,12 @@ void traduzir_instrucao(OperacaoILOC *op) {
         if (op->rotulo[0] != 'L' || strcmp(op->rotulo, "main") == 0) {
             printf("\tpushq\t%%rbp\n");
             printf("\tmovq\t%%rsp, %%rbp\n");
+
+            /* Salvar registradores Callee-Saved */
+            printf("\tpushq\t%%rbx\n");
+            printf("\tpushq\t%%r12\n");
+            printf("\tpushq\t%%r13\n");
+            printf("\tpushq\t%%r14\n");
 
             /* Aloca espaço na pilha (alinhado a 16 bytes) */
             int size = (max_reg_idx + 1) * 4;
@@ -314,6 +319,13 @@ void traduzir_instrucao(OperacaoILOC *op) {
             if (op->num_fonte > 0) {
                 printf("\tmovl\t"); imprimir_operando(op->operandos_fonte[0]); printf(", %%eax\n");
             }
+
+            /* Restaurar registradores (Ordem Inversa do Push) */
+            printf("\tpopq\t%%r14\n");
+            printf("\tpopq\t%%r13\n");
+            printf("\tpopq\t%%r12\n");
+            printf("\tpopq\t%%rbx\n");
+
             printf("\tleave\n");
             printf("\tret\n");
             break;
