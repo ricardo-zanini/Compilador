@@ -4,7 +4,7 @@
 #include <string.h>
 
 /* Contadores globais para geração de nomes de rótulos e temporários */
-static int count_temp = 0;
+static int count_temp = 1000;
 static int count_rotulos = 0;
 
 /* Função auxiliar para debug/impressão */
